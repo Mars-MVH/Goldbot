@@ -1,0 +1,8 @@
+yfinance==0.2.36
+pandas
+cloudscraper
+beautifulsoup4
+google-genai
+pillow
+python-dotenv
+python-telegram-bot

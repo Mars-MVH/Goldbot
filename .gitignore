@@ -40,7 +40,6 @@ temp_images/
 *.png
 *.jpg
 *.html
-*.txt
 mp_cookies.json
 radar_memory.db
 data/
