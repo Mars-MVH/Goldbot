@@ -1,0 +1,46 @@
+# Python temporary files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+
+# Environment variables (SENSITIVE DATA)
+.env
+.env.*
+
+# Database files
+*.db
+*.sqlite3
+
+# Local settings
+.vscode/
+.idea/
+
+# Bot specific data/temp
+temp_cart/
+temp_images/
+*.png
+*.jpg
+*.html
+*.txt
+mp_cookies.json
+radar_memory.db
+data/
