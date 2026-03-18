@@ -118,9 +118,15 @@ def get_live_spot_prices():
     
     # --- Primaire bron: Yahoo Finance ---
     try:
-        gold_usd = yf.Ticker("GC=F")
-        silver_usd = yf.Ticker("SI=F")
-        eur_usd = yf.Ticker("EURUSD=X")
+        # Gebruik een custom session met User-Agent om 'Expecting value' errors (bot-checks) te omzeilen
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+        })
+        
+        gold_usd = yf.Ticker("GC=F", session=session)
+        silver_usd = yf.Ticker("SI=F", session=session)
+        eur_usd = yf.Ticker("EURUSD=X", session=session)
         
         g_usd_price = float(gold_usd.history(period="1d")['Close'].iloc[-1])
         s_usd_price = float(silver_usd.history(period="1d")['Close'].iloc[-1])

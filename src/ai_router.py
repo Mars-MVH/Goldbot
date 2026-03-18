@@ -84,7 +84,7 @@ def _call_ollama(prompt, image_paths, system_instruction, model_override):
     # Tekst focus: llama3:8b (of gemma2)
     # Vision focus: moondream (of llava)
     if image_paths:
-        model = model_override or os.environ.get("OLLAMA_VISION_MODEL", "qwen2.5-vl:3b")
+        model = model_override or os.environ.get("OLLAMA_VISION_MODEL", "qwen2.5vl:3b")
     else:
         model = model_override or os.environ.get("OLLAMA_TEXT_MODEL", "llama3:8b")
         

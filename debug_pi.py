@@ -18,15 +18,20 @@ def check_diagnostics():
         print(f"Internet: FAILED ({e})")
         
     # 3. Check yfinance (The main problem)
-    print("\nTesting Yahoo Finance (GC=F)...")
+    print("\nTesting Yahoo Finance (GC=F) with Session + User-Agent...")
     try:
-        ticker = yf.Ticker("GC=F")
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+        })
+        
+        ticker = yf.Ticker("GC=F", session=session)
         hist = ticker.history(period="1d")
         if not hist.empty:
             price = hist['Close'].iloc[-1]
             print(f"yfinance: OK (Price: {price})")
         else:
-            print("yfinance: FAILED (Empty DataFrame - common for clock/SSL issues)")
+            print("yfinance: FAILED (Empty DataFrame - try running 'pip install --upgrade yfinance')")
     except Exception as e:
         print(f"yfinance: ERROR ({e})")
 
