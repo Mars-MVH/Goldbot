@@ -1,0 +1,65 @@
+<li class="hz-Listing hz-Listing--list-item">
+ <div class="hz-Listing-listview-content-new">
+  <div class="hz-Listing-item-wrapper-new">
+   <a class="hz-Link hz-Link--block hz-Listing-coverLink-new" data-tracking="SFTXBTc7fdtPsqKDgqKBQyq-tJKz60qrBgEWV0ABzP_kKSUe9H9j-75Mlzr9JyphB0SkH37eu8jhNqSNvzsEgkV6THysHt4kfHPTx3rAweUqFRtNc14z5T-UxegW3gMT2DnJTp1zZ-78wXgGOThIJOHD5zS7Y9rMnYnquOmFq-w0PoHVJDi6Rq1yFfEk_RYKslDKk_am_5C6o_WRrpyunZvcRafInEbiwsRjV55fmoY7IiiIpXtmIwnaWIkakYNQfS-2qR_hOhIeMqoRifLAW6UWy0ECNzFCAsUZKccRNdBiZKKSUXppKLRSB6vPXKtXnpvyjb3J0aXnD2BeBN3-CgXVbOjoY06vzXo2egY42dBbMTZevtyN7wZYd5NSdUtiBJzlwf-jm22QXCv-psebL2xjZpRffJhBw79EQLHlh-z7uxTYqMzJx5gOHNLqpeKS38yWzTESLMdnjo_tMXFKzGQ-sl0YWjmC5e4JOSKvja-kIOMIiH6T0VGmO1OvMgNMrC16RX-caJDhKplIdCyKFil7-t2bhtIawifWKKr-WB_T4rXMmnKUD5Sh03ln5rVQ" href="/v/postzegels-en-munten/edelmetalen-en-baren/a1503904301-1-troy-ounce-zilveren-maple-leaf-munt-goedkoop" role="link">
+    <div class="hz-imageContainer hz-Listing-image-container-new">
+     <div class="hz-Listing-image-item hz-Listing-image-item--main">
+      <div class="hz-Image-container hz-Image-container">
+       <img alt="1 troy ounce zilveren Maple Leaf munt (goedkoop), Verzenden, Zilver" class="hz-Image hz-Image--landscape" data-src="https://mp.images.icas.io/api/v1/a6519ad0/images/e3/e3598508-55b1-4409-812c-68feb456120b?rule=eps_82" fetchpriority="high" loading="eager" src="https://mp.images.icas.io/api/v1/a6519ad0/images/e3/e3598508-55b1-4409-812c-68feb456120b?rule=eps_82" title="1 troy ounce zilveren Maple Leaf munt (goedkoop), Verzenden, Zilver"/>
+      </div>
+     </div>
+    </div>
+    <div class="hz-Listing-group-new">
+     <div class="hz-Listing-group--title-description-attributes-new">
+      <div class="hz-title-description ListingTitleDescription_hz-Listing-title-description__W067e">
+       <strong class="hz-Text hz-Text--bodyLarge">
+        1 troy ounce zilveren Maple Leaf munt (goedkoop)
+       </strong>
+       <span class="hz-Text hz-Text--bodyRegular ListingDescription_hz-Listing-description-new__KKQ0_">
+        Zilver kopen? Bekijk deze 1 troy ounce zilveren maple leaf munten. Kijk op onze website voor de actuele prijs. Deze munt van puur zilver verkopen wij los per stuk, per munttube of in een monsterbox zi
+       </span>
+      </div>
+      <div class="hz-attributes-wrapper ListingAttributes_hz-Listing-attributes-wrapper__p6bF_">
+       <div class="hz-attributes ListingAttributes_hz-Listing-attributes__cCCT4">
+        <span class="undefined ListingAttribute_hz-Attribute--default__Vr3NN">
+         <span class="hz-Text hz-Text--bodyRegularStrong">
+          Verzenden
+          <!-- -->
+         </span>
+        </span>
+       </div>
+      </div>
+     </div>
+     <div class="hz-price-date-feature ListingPriceDateFeature_hz-Listing-price-date-feature__NY_PW">
+      <h5 class="hz-Title hz-Title--title5 ListingPrice_hz-Listing-price__tlzf6">
+       Zie omschrijving
+      </h5>
+      <span class="hz-Text hz-Text--bodyRegular ListingDate_hz-Listing-date__cX8M_">
+       Vandaag
+      </span>
+      <span class="hz-Text hz-Text--bodyRegular u-colorTextSuccess ListingPriority_hz-Listing-priority-new__YxcW9">
+       <span>
+        Topadvertentie
+       </span>
+      </span>
+     </div>
+    </div>
+   </a>
+   <div class="hz-Listing-sellerInfo ListingSellerInfo_hz-Listing-sellerInfo__ONj5d">
+    <span class="ListingSellerName_hz-Listing-seller-name-container__8sQ8W">
+     <a class="hz-Link hz-Link--isolated hz-TextLink" role="link" tabindex="0">
+      <span class="hz-Listing-seller-name-new">
+       Goudzaken
+      </span>
+     </a>
+    </span>
+    <span class="hz-Text hz-Text--bodyRegular u-colorTextSecondary ListingLocationDetails_hz-Listing-location-label__GfAXl">
+     Heel Nederland
+    </span>
+    <span class="hz-Listing-seller-link">
+    </span>
+   </div>
+  </div>
+ </div>
+</li>
+
