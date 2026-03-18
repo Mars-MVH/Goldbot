@@ -109,7 +109,7 @@ def _call_ollama(prompt, image_paths, system_instruction, model_override):
         payload["images"] = encoded_images
         
     try:
-        response = requests.post(url, json=payload, timeout=60)
+        response = requests.post(url, json=payload, timeout=180)
         response.raise_for_status()
         result_json = response.json()
         
