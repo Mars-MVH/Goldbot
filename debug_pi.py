@@ -18,20 +18,16 @@ def check_diagnostics():
         print(f"Internet: FAILED ({e})")
         
     # 3. Check yfinance (The main problem)
-    print("\nTesting Yahoo Finance (GC=F) with Session + User-Agent...")
+    print("\nTesting Yahoo Finance (GC=F)...")
     try:
-        session = requests.Session()
-        session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
-        })
-        
-        ticker = yf.Ticker("GC=F", session=session)
+        # Tegenwoordig gebruikt yf.Ticker zelf curl-cffi als dat geïnstalleerd is
+        ticker = yf.Ticker("GC=F")
         hist = ticker.history(period="1d")
         if not hist.empty:
             price = hist['Close'].iloc[-1]
             print(f"yfinance: OK (Price: {price})")
         else:
-            print("yfinance: FAILED (Empty DataFrame - try running 'pip install --upgrade yfinance')")
+            print("yfinance: FAILED (Check of 'curl-cffi' is geïnstalleerd)")
     except Exception as e:
         print(f"yfinance: ERROR ({e})")
 
