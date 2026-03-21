@@ -589,7 +589,7 @@ async def analyse_command(update: Update, context: ContextTypes.DEFAULT_TYPE, mo
         # 1. Pass 1: Visuele Voor-Scan van het Product
         await status_msg.edit_text(
             "👁️ *[2/4] Visuele AI Scan bezig...*\n"
-            "_De AI analyseert nu de stempels en specificaties (dit duurt ca. 1 minuut op de Pi)_",
+            "_De AI leest nu de graveerstempels en conditie (via de Gemini Enterprise Cloud)_",
             parse_mode="Markdown"
         )
         # Geef cart-tekst mee zodat pre-scan de vraagprijs en gewicht beter kan herkennen
