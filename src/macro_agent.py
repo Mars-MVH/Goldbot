@@ -625,16 +625,17 @@ def analyze_macro_sentiment(macro_data, reddit_texts, events_text):
         return router_generate_content(
             prompt=prompt,
             system_instruction=system_instruction,
-            model_override="gemma2:2b" # Sneller tekstmodel voor macro analyse op Pi
+            model_override="gemma2:2b", # Sneller tekstmodel voor macro analyse op Pi
+            require_json=True
         )
 
     except Exception as e:
         print(f"❌ [Macro Agent] Fout tijdens analyse via Router: {e}")
         return {
             "macro_score": 0, 
-            "advies_samenvatting": f"Macro analyse gefaald: {e}",
-            "sentiment_alert": "Fout",
-            "kalender_alert": "Fout"
+            "advies_samenvatting": "Macro analyse tijdelijk niet beschikbaar (API/Netwerk fout).",
+            "sentiment_alert": "Onbekend",
+            "kalender_alert": "Onbekend"
         }
 
 if __name__ == "__main__":

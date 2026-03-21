@@ -96,7 +96,8 @@ def pre_scan_image(image_paths, text_context=""):
         data = router_generate_content(
             prompt=prompt,
             images=image_paths,
-            system_instruction=PASS_1_SYSTEM_PROMPT
+            system_instruction=PASS_1_SYSTEM_PROMPT,
+            require_json=True
         )
         
         # Robust Weight Parsing
@@ -168,33 +169,5 @@ def analyze_whatsapp_offer(text_content, image_paths, market_prices_str, mode="K
 
     except Exception as e:
         print(f"❌ [Expert AI] Fout tijdens analyse via Router: {e}")
-        return get_mock_response(mode)
-
-def get_mock_response(mode="Koop"):
-    if mode == "Koop":
-        return {
-            "intentie": "Koop",
-            "product": "Zilver, 1 Oz",
-            "huidige_marktprijs": "Spot: 30, Dealer Ask: 35",
-            "analyse_koop": {
-                "vraagprijs_oordeel": "Goed",
-                "btw_valstrik": "Geen (munt)",
-                "macro_impact": "Gunstig",
-                "advies": "Mooie kans, de marktplaats prijs is significant goedkoper dan de dealer."
-            }
-        }
-    else:
-        return {
-            "intentie": "Verkoop",
-            "product": "Zilver, 1 Oz",
-            "huidige_marktprijs": "Spot: 30, Dealer Bid: 31",
-            "analyse_verkoop": {
-                "jouw_vraagprijs_premium": "N.v.t. (Alleen bod ontvangen)",
-                "bod_van_koper": "30",
-                "ideale_vraagprijs_advies": "Vraag 33, ligt mooi in het midden.",
-                "reele_waarde": "32",
-                "advies": "Afwijzen",
-                "betere_opties": "Verkoop aan The Silver Mountain voor 31"
-            }
-        }
+        return f"Expert Analyse faalde vanwege technische fout: {e}"
 
