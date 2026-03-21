@@ -84,12 +84,11 @@ def pre_scan_image(image_paths, text_context=""):
         if text_context:
             prompt += f"\n\nContext:\n{text_context}"
             
-        # Router aanroepen (Vision model focus)
+        # Router aanroepen (Vision model wordt automatisch gekozen door ai_router)
         data = router_generate_content(
             prompt=prompt,
             images=image_paths,
-            system_instruction=PASS_1_SYSTEM_PROMPT,
-            model_override="moondream" # Voor Ollama switch
+            system_instruction=PASS_1_SYSTEM_PROMPT
         )
         
         # Robust Weight Parsing

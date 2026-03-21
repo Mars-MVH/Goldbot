@@ -912,6 +912,9 @@ async def kluis_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         total_value = 0
         lines = []
         
+        # Haal spotprijzen EENMAAL op voor alle items (performance fix)
+        spot_prices = get_live_spot_prices()
+        
         for item_id, product, weight_oz, metal, purchase_price, purchase_date, amount in items:
             # Formuleer Apples-to-Apples pre_scan object
             # Uitgebreide munt-detectie voor correcte categorisatie
@@ -932,7 +935,6 @@ async def kluis_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "jaartal": "diverse"
             }
             
-            spot_prices = get_live_spot_prices()
             highest_bid, best_dealer = await get_highest_live_bid_for_item(pre_scan_data, spot_prices)
             method = "LIVE_SCRAPE" if "Inkoop" in best_dealer else "ALGO"
             
@@ -953,7 +955,6 @@ async def kluis_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             emoji = "🟢" if profit >= 0 else "🔴"
             # [LOGIC UPGRADE] Spread Warning Check
             spread_warning = ""
-            spot_prices = get_live_spot_prices()
             spot_m = spot_prices.get("gold_eur_oz_physical", 0) if "goud" in metal.lower() else spot_prices.get("silver_eur_oz_physical", 0)
             if spot_m > 0 and highest_bid > 0:
                 spread = (spot_m * weight_oz - highest_bid) / (spot_m * weight_oz)

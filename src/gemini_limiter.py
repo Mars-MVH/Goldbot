@@ -69,6 +69,10 @@ def rate_limited_call(api_func, *args, **kwargs):
     - Retries met exponential backoff bij 429
     - Stopt als dagelijks quota bereikt is
     
+    LET OP: Deze functie bevat sync time.sleep() calls.
+    Gebruik rate_limited_call_async() vanuit async code om de event loop
+    niet te blokkeren.
+    
     Gebruik:
         result = rate_limited_call(client.models.generate_content, model=..., contents=...)
     """
@@ -121,6 +125,20 @@ def rate_limited_call(api_func, *args, **kwargs):
     
     # Alle retries gefaald
     raise Exception(f"Gemini API call gefaald na {MAX_RETRIES} pogingen (rate limited).")
+
+
+async def rate_limited_call_async(api_func, *args, **kwargs):
+    """
+    Async wrapper voor rate_limited_call.
+    Draait de synchrone rate limiter in een executor zodat de
+    Telegram event loop niet bevriest tijdens throttling/backoff.
+    """
+    import asyncio
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(
+        None, lambda: rate_limited_call(api_func, *args, **kwargs)
+    )
+
 
 
 class QuotaExhaustedError(Exception):

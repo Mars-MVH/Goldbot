@@ -1,9 +1,26 @@
+# Core Data
 yfinance>=0.2.40
 curl-cffi
 pandas
+matplotlib
+
+# Web Scraping
 cloudscraper
 beautifulsoup4
+requests
+aiohttp
+playwright
+
+# AI
 google-genai
 pillow
+httpx
+
+# Telegram Bot
+python-telegram-bot[job-queue]
 python-dotenv
-python-telegram-bot
+pytz
+
+# CME Excel Parsing
+openpyxl
+xlrd
