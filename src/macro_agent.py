@@ -13,6 +13,8 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 load_dotenv()
 
+_macro_cache = {"data": None, "last_fetch": None}
+
 def fetch_macro_data():
     """
     Haalt de belangrijkste macro-economische indicatoren op via Yahoo Finance.
@@ -21,7 +23,12 @@ def fetch_macro_data():
     - GC=F : Gold Futures
     - SI=F : Silver Futures
     """
-    print("[Macro Agent] Ophalen actuele macro-economische data...")
+    now = datetime.datetime.now()
+    if _macro_cache["last_fetch"] and (now - _macro_cache["last_fetch"]).total_seconds() < 3600:
+        print("[Macro Agent] Ophalen actuele macro-economische data... (CACHED)")
+        return _macro_cache["data"]
+        
+    print("[Macro Agent] Ophalen actuele macro-economische data... (LIVE)")
     
     tickers = {
         "dxy": "DX-Y.NYB",
@@ -56,11 +63,15 @@ def fetch_macro_data():
         except Exception:
             data["gold_silver_ratio"] = None
             
+        _macro_cache["data"] = data
+        _macro_cache["last_fetch"] = now
         return data
 
     except Exception as e:
         print(f"❌ [Macro Agent] Fout tijdens ophalen macro data: {e}")
         return None
+
+_reddit_cache = {"data": None, "last_fetch": None}
 
 def fetch_reddit_sentiment():
     """
@@ -78,7 +89,12 @@ def fetch_reddit_sentiment():
     all_titles = []
     sources_ok = 0
     
-    print("[Macro Agent] Ophalen Reddit sentiment (multi-subreddit)...")
+    now = datetime.datetime.now()
+    if _reddit_cache["last_fetch"] and (now - _reddit_cache["last_fetch"]).total_seconds() < 3600:
+        print("[Macro Agent] Ophalen Reddit sentiment (multi-subreddit)... (CACHED)")
+        return _reddit_cache["data"]
+        
+    print("[Macro Agent] Ophalen Reddit sentiment (multi-subreddit)... (LIVE)")
     
     for sub, label in subreddits:
         try:
@@ -116,8 +132,14 @@ def fetch_reddit_sentiment():
     print(f"✅ [Macro Agent] Sentiment: {len(all_titles)} posts van {sources_ok} bronnen")
     
     if all_titles:
-        return "\n".join([f"- {t}" for t in all_titles])
-    return "Kon geen Reddit/Kitco data ophalen."
+        result = "\n".join([f"- {t}" for t in all_titles])
+        _reddit_cache["data"] = result
+        _reddit_cache["last_fetch"] = now
+        return result
+        
+    _reddit_cache["data"] = "Kon geen Reddit/Kitco data ophalen."
+    _reddit_cache["last_fetch"] = now
+    return _reddit_cache["data"]
 
 # ============================================================
 # AUTOMATISCHE ECONOMISCHE KALENDER
@@ -603,7 +625,7 @@ def analyze_macro_sentiment(macro_data, reddit_texts, events_text):
         return router_generate_content(
             prompt=prompt,
             system_instruction=system_instruction,
-            model_override="llama3:8b" # Voor Ollama switch
+            model_override="gemma2:2b" # Sneller tekstmodel voor macro analyse op Pi
         )
 
     except Exception as e:

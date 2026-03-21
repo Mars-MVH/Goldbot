@@ -597,14 +597,29 @@ async def analyse_command(update: Update, context: ContextTypes.DEFAULT_TYPE, mo
         pre_scan_data = pre_scan_image(cart["photos"], text_context=cart_text_context)
         metaal_type = pre_scan_data.get("metaal", "Goud").lower()
         
-        # 2. Haal actuele prijzen op (aangepast op metaal later)
+        # 2. Haal actuele prijzen & sentiment op (PARALLEL om tijd te besparen op de Pi)
         await status_msg.edit_text(
-            "📊 *[3/4] Live marktprijzen ophalen...*\n"
-            "_Actuele data van goud/zilver dealers scrapen..._",
+            "📊 *[3/4] Live marktprijzen & sentiment ophalen...*\n"
+            "_Actuele data van goud/zilver dealers scrapen en macro-bot raadplegen..._",
             parse_mode="Markdown"
         )
-        spot_prices = get_live_spot_prices()
-        dealer_data = await fetch_dealer_premiums(pre_scan_data)
+        
+        import asyncio
+        
+        # Start de taken parallel: Dealer scraping (Playwright), Spot API, en Macro AI
+        spot_task = asyncio.to_thread(get_live_spot_prices)
+        dealer_task = fetch_dealer_premiums(pre_scan_data)
+        
+        def _get_macro_sentiment_sync():
+            mr = fetch_macro_data()
+            rr = fetch_reddit_sentiment()
+            er = get_upcoming_events()
+            return analyze_macro_sentiment(mr, rr, er)
+            
+        macro_task = asyncio.to_thread(_get_macro_sentiment_sync)
+        
+        # Wacht tot Dealer & Spot Data binnen is (voor we marktprijzen berekenen)
+        dealer_data, spot_prices = await asyncio.gather(dealer_task, spot_task)
         
         dyn_ask, dyn_dealer_ask, dyn_country_ask, dyn_ask_method = get_lowest_ask_price("Geanalyseerd Product", dealer_data)
         dyn_bid, dyn_dealer_bid, dyn_country_bid, dyn_bid_method = get_highest_bid_price("Geanalyseerd Product", dealer_data)
@@ -710,11 +725,8 @@ async def analyse_command(update: Update, context: ContextTypes.DEFAULT_TYPE, mo
         combined_text += f"Conditie: {pre_scan_data.get('conditie_opmerkingen', 'Onbekend')}\n"
         combined_text += f"Verpakking: {pre_scan_data.get('verpakking', 'Onbekend')}\n"
             
-        # 4. Macro Sentiment Ophalen
-        macro_raw = fetch_macro_data()
-        reddit_raw = fetch_reddit_sentiment()
-        events_raw = get_upcoming_events()
-        macro_sentiment = analyze_macro_sentiment(macro_raw, reddit_raw, events_raw)
+        # 4. Wacht tot de Macro achtergrondtaak ook klaar is (vaak is deze nu al af door caching/threading)
+        macro_sentiment = await macro_task
             
         # 5. Roep de Gemini Expert aan (Pass 2)
         await status_msg.edit_text(

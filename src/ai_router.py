@@ -123,8 +123,17 @@ def _call_ollama(prompt, image_paths, system_instruction, model_override):
         payload["images"] = encoded_images
         
     try:
-        response = requests.post(url, json=payload, timeout=180)
-        response.raise_for_status()
+        # Paging zware modellen in RAM op een volle Pi kan lang duren. We gebruiken een dubbele poging met royale timeout.
+        try:
+            response = requests.post(url, json=payload, timeout=300)
+            response.raise_for_status()
+        except requests.exceptions.ReadTimeout:
+            logger.warning("⏳ [Router] Ollama timeout na 300s. CPU is waarschijnlijk druk aan het inladen. Retry in 5s...")
+            import time
+            time.sleep(5)
+            response = requests.post(url, json=payload, timeout=300)
+            response.raise_for_status()
+            
         result_json = response.json()
         
         # Ollama geeft het antwoord in het 'response' veld

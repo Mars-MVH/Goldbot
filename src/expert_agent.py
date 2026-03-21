@@ -54,9 +54,17 @@ Houd je strikt aan deze JSON output. Genereer GEEN markdown formatting block ron
 """
 
 PASS_1_SYSTEM_PROMPT = """
-Jij bent een formidabele data-extractor voor edelmetalen. Je taak is supersnel: Bekijk de meegeleverde afbeelding(en) en retourneer DIRECT feitelijke classificatie-data in JSON. 
+Jij bent een meedogenloze data-extractor voor edelmetalen. Retourneer DIRECT feitelijke classificatie-data in JSON. 
 Kijk naar visuele gravures op de munt of baar (bijv. '1/4 Oz', '50g', 'C. Hafner', 'Umicore'). 
 Wees feitelijk over de conditie: zie je krassen of beschadigingen? Zie je een origineel blistercertificaat of originele capsule?
+
+CRUCIALE GEWICHTSREFERENTIE (Als het gewicht niet EXPLICIET te lezen is op de munt/baar, MOET je deze tabel gebruiken):
+- Gouden Tientje / 10 Gulden: 0.1947 Oz
+- Sovereign / Half-Sovereign: 0.2354 Oz
+- Krugerrand, Maple Leaf, Eagle (Tenzij 1/2 of 1/4 vermeld!): 1.0 Oz
+- Napoleon / Marengo 20 Frank / Lira: 0.1867 Oz
+- Dukaat: 0.1105 Oz
+Dwing het veld "gewicht_oz" naar het exacte getal uit deze lijst indien je deze munt(en) herkent. Geef nooit 1.55 Oz raad-antwoorden.
 
 Geef ALTIJD EXACT de volgende JSON structuur:
 {
@@ -102,6 +110,11 @@ def pre_scan_image(image_paths, text_context=""):
                 data["gewicht_oz"] = float(raw_weight)
         except:
              data["gewicht_oz"] = 1.0
+             
+        # Guardrail / Sanity check - Munten > 2.0 Oz zijn extreem onwaarschijnlijk (voorkomt 1.55 Oz hallucinaties)
+        if data.get("type", "").lower() == "munt" and data["gewicht_oz"] > 2.0:
+            print(f"⚠️ [Pass 1 Guardrail] AI schatte {data['gewicht_oz']} Oz voor een munt. Onwaarschijnlijk, fallback naar 1.0 Oz.")
+            data["gewicht_oz"] = 1.0
              
         print(f"👁️ [Pass 1] Resultaat: {data}")
         return data
