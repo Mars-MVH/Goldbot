@@ -164,10 +164,17 @@ def analyze_whatsapp_offer(text_content, image_paths, market_prices_str, mode="K
         return router_generate_content(
             prompt=prompt,
             images=None,
-            system_instruction=sys_prompt
+            system_instruction=sys_prompt,
+            require_json=True
         )
 
     except Exception as e:
         print(f"❌ [Expert AI] Fout tijdens analyse via Router: {e}")
-        return f"Expert Analyse faalde vanwege technische fout: {e}"
+        return {
+            "intentie": mode,
+            "product": "Onbekend",
+            f"analyse_{mode.lower()}": {
+                "advies": "Analyse faalde vanwege een Cloud AI netwerkfout of onjuiste API stuur."
+            }
+        }
 
