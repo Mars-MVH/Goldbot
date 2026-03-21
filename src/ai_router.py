@@ -61,8 +61,20 @@ def _call_gemini(prompt, image_paths, system_instruction, require_json=False):
         
     contents = [full_prompt]
     if image_paths:
+        from PIL import Image
         for img_path in image_paths:
-            contents.append(Image.open(img_path))
+            try:
+                with Image.open(img_path) as img:
+                    if img.mode != 'RGB':
+                        img = img.convert('RGB')
+                    img.thumbnail((800, 800), Image.Resampling.LANCZOS)
+                    # We pass the PIL Image object securely to Gemini
+                    # Genai client accepts PIL objects naturally!
+                    contents.append(img.copy())
+            except Exception as e:
+                logger.error(f"Fout bij optimaliseren foto voor Gemini op Pi: {e}")
+                with Image.open(img_path) as img:
+                     contents.append(img.copy())
             
     # Gebruik de bestaande rate limiter
     kwargs = {

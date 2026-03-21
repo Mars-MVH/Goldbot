@@ -593,8 +593,11 @@ async def analyse_command(update: Update, context: ContextTypes.DEFAULT_TYPE, mo
             parse_mode="Markdown"
         )
         # Geef cart-tekst mee zodat pre-scan de vraagprijs en gewicht beter kan herkennen
+        import asyncio
         cart_text_context = "\n".join(cart["text"]) if cart["text"] else ""
-        pre_scan_data = pre_scan_image(cart["photos"], text_context=cart_text_context)
+        
+        # Voer de zware synchrone pre-scan uit in een aparte thread
+        pre_scan_data = await asyncio.to_thread(pre_scan_image, cart["photos"], text_context=cart_text_context)
         metaal_type = pre_scan_data.get("metaal", "Goud").lower()
         
         # 2. Haal actuele prijzen & sentiment op (PARALLEL om tijd te besparen op de Pi)
@@ -734,7 +737,8 @@ async def analyse_command(update: Update, context: ContextTypes.DEFAULT_TYPE, mo
             "_Het financiële aankoop/verkoop advies wordt nu gegenereerd..._",
             parse_mode="Markdown"
         )
-        expert_oordeel = analyze_whatsapp_offer(combined_text, cart["photos"], market_str, mode=mode)
+        # Voer de zware synchrone tekst-analyse uit in een aparte thread
+        expert_oordeel = await asyncio.to_thread(analyze_whatsapp_offer, combined_text, cart["photos"], market_str, mode=mode)
         
         # 5b. Extract vraagprijs uit pre-scan of tekst
         vraagprijs = 0
