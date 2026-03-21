@@ -145,10 +145,11 @@ def analyze_whatsapp_offer(text_content, image_paths, market_prices_str, mode="K
         sys_prompt = EXPERT_BUYER_PROMPT if mode == "Koop" else EXPERT_SELLER_PROMPT
         prompt = f"De tekst van de aanbieding/bod is:\n{text_content}{context_str}"
         
-        # Router aanroepen
+        # Router aanroepen (ZONDER foto's: we hebben ze in Pass 1 al gescand!)
+        # Hierdoor gebruikt Ollama op de Pi het snelle LLM model i.p.v. Vision.
         return router_generate_content(
             prompt=prompt,
-            images=image_paths,
+            images=None,
             system_instruction=sys_prompt
         )
 

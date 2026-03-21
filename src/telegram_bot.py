@@ -577,18 +577,32 @@ async def analyse_command(update: Update, context: ContextTypes.DEFAULT_TYPE, mo
     num_photos = len(cart["photos"])
     num_texts = len(cart["text"])
     
-    await message_obj.reply_text(f"⏳ Start AI Analyse met {num_photos} foto's en {num_texts} tekstberichten...")
+    status_msg = await message_obj.reply_text(
+        f"⏳ *[1/4] Afbeeldingen voorbereiden...*\n"
+        f"Gevonden: {num_photos} foto's, {num_texts} teksten",
+        parse_mode="Markdown"
+    )
     
     # Imports moved to top of file
     
     try:
         # 1. Pass 1: Visuele Voor-Scan van het Product
+        await status_msg.edit_text(
+            "👁️ *[2/4] Visuele AI Scan bezig...*\n"
+            "_De AI analyseert nu de stempels en specificaties (dit duurt ca. 1 minuut op de Pi)_",
+            parse_mode="Markdown"
+        )
         # Geef cart-tekst mee zodat pre-scan de vraagprijs en gewicht beter kan herkennen
         cart_text_context = "\n".join(cart["text"]) if cart["text"] else ""
         pre_scan_data = pre_scan_image(cart["photos"], text_context=cart_text_context)
         metaal_type = pre_scan_data.get("metaal", "Goud").lower()
         
         # 2. Haal actuele prijzen op (aangepast op metaal later)
+        await status_msg.edit_text(
+            "📊 *[3/4] Live marktprijzen ophalen...*\n"
+            "_Actuele data van goud/zilver dealers scrapen..._",
+            parse_mode="Markdown"
+        )
         spot_prices = get_live_spot_prices()
         dealer_data = await fetch_dealer_premiums(pre_scan_data)
         
@@ -703,6 +717,11 @@ async def analyse_command(update: Update, context: ContextTypes.DEFAULT_TYPE, mo
         macro_sentiment = analyze_macro_sentiment(macro_raw, reddit_raw, events_raw)
             
         # 5. Roep de Gemini Expert aan (Pass 2)
+        await status_msg.edit_text(
+            "🧠 *[4/4] Expert Analyse schrijven...*\n"
+            "_Het financiële aankoop/verkoop advies wordt nu gegenereerd..._",
+            parse_mode="Markdown"
+        )
         expert_oordeel = analyze_whatsapp_offer(combined_text, cart["photos"], market_str, mode=mode)
         
         # 5b. Extract vraagprijs uit pre-scan of tekst
@@ -825,6 +844,11 @@ async def analyse_command(update: Update, context: ContextTypes.DEFAULT_TYPE, mo
             os.remove(chart_path) # Direct opruimen
         else:
             reply_msg += "\n\n⚠️ *Grafiek Fout:* Kon actuele koersdata niet ophalen."
+            
+        try:
+            await status_msg.delete()
+        except:
+            pass
             
         await message_obj.reply_text(reply_msg, parse_mode="Markdown", disable_web_page_preview=True)
         

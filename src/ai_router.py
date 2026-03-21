@@ -103,9 +103,23 @@ def _call_ollama(prompt, image_paths, system_instruction, model_override):
         # Ollama verwacht base64 strings voor afbeeldingen
         encoded_images = []
         for img_path in image_paths:
-            with open(img_path, "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                encoded_images.append(encoded_string)
+            try:
+                # Verklein resolutie zodat Ollama Vision op Pi niet vastloopt (max 800x800)
+                from PIL import Image
+                with Image.open(img_path) as img:
+                    if img.mode != 'RGB':
+                        img = img.convert('RGB')
+                    img.thumbnail((800, 800), Image.Resampling.LANCZOS)
+                    buffered = BytesIO()
+                    img.save(buffered, format="JPEG", quality=85)
+                    encoded_string = base64.b64encode(buffered.getvalue()).decode('utf-8')
+                    encoded_images.append(encoded_string)
+            except Exception as e:
+                logger.error(f"Fout bij optimaliseren foto voor Ollama: {e}")
+                # Fallback naar origineel
+                with open(img_path, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                    encoded_images.append(encoded_string)
         payload["images"] = encoded_images
         
     try:
