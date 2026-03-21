@@ -896,16 +896,42 @@ async def fetch_dealer_premiums(pre_scan_data=None):
     product_cat = _determine_product_category(pre_scan_data)
     
     # 3. Live scrapers
-    hg_live_gold, hg_live_silv, hg_live_gold_bar, hg_live_silv_bar = get_live_holland_gold()
+    # We voeren de synchrone scrapers parallel uit in achtergrond-threads om blokkades te minimaliseren
+    import asyncio
+    
+    hg_task = asyncio.to_thread(get_live_holland_gold)
+    tsm_task = asyncio.to_thread(get_live_tsm)
+    tsm_bid_task = asyncio.to_thread(get_live_bid_tsm)
+    m101_task = asyncio.to_thread(get_live_101munten)
+    
+    # hg_bid_task is al een async functie (Playwright)
+    hg_bid_task = get_live_bid_holland_gold()
+    
+    # Wacht op alle scrapers tegelijkertijd (enorme tijdwinst)
+    results = await asyncio.gather(
+        hg_task, hg_bid_task, tsm_task, tsm_bid_task, m101_task, 
+        return_exceptions=True
+    )
+    
+    def _safe_unpack(res_list, expected_len=4):
+        if isinstance(res_list, Exception):
+            print(f"⚠️ Fout tijdens parallelle dealer scrape: {res_list}")
+            return [None] * expected_len
+        if not res_list or len(res_list) != expected_len:
+            return [None] * expected_len
+        return res_list
+        
+    hg_live_gold, hg_live_silv, hg_live_gold_bar, hg_live_silv_bar = _safe_unpack(results[0])
     is_live_hg = bool(hg_live_gold and hg_live_silv and hg_live_gold_bar)
     
-    hg_bid_gold, hg_bid_silv, hg_bid_gold_bar, hg_bid_silv_bar = await get_live_bid_holland_gold()
+    hg_bid_gold, hg_bid_silv, hg_bid_gold_bar, hg_bid_silv_bar = _safe_unpack(results[1])
     
-    tsm_silv_munt, tsm_gold_munt, tsm_gold_bar, tsm_silv_bar = get_live_tsm()
-    tsm_bid_gold, tsm_bid_silv, tsm_bid_gold_bar, tsm_bid_silv_bar = get_live_bid_tsm()
+    tsm_silv_munt, tsm_gold_munt, tsm_gold_bar, tsm_silv_bar = _safe_unpack(results[2])
     is_live_tsm = bool(tsm_silv_munt or tsm_gold_munt or tsm_gold_bar or tsm_silv_bar)
     
-    m101_gold, m101_silver, m101_gold_bar, m101_silv_bar = get_live_101munten()
+    tsm_bid_gold, tsm_bid_silv, tsm_bid_gold_bar, tsm_bid_silv_bar = _safe_unpack(results[3])
+    
+    m101_gold, m101_silver, m101_gold_bar, m101_silv_bar = _safe_unpack(results[4])
     is_live_101 = bool(m101_gold or m101_silver or m101_gold_bar or m101_silv_bar)
     
     # 4. Parse dynamic variables from Pass 1
